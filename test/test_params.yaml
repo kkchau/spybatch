@@ -1,0 +1,10 @@
+__default__:
+    "--time": "00:05:00"
+    "--partition": "shared"
+    "--mem": "10G"
+    "--mail-type": "ALL"
+    "--mail-user": "test@test.edu"
+
+Job1:
+    "--partition": "compute"
+    "--mem": "20G"
