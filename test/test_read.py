@@ -1,17 +1,29 @@
 import unittest
 import sys
 
-from spybatch.job_definitions import read_params
+from spybatch.job_definitions import read_params, check_rules, read_rules
 
 class readTest(unittest.TestCase):
 
     def setUp(self):
         self.job_names = ["Job1", "Job2"]
+        self.params_handle = open("test/test_params.yaml")
+        self.rules_handle = open("test/test_rules.yaml")
+        self.rules_fail = {
+            "prepend": "", 
+            "Job1": {
+                "depends_on": "",
+                "command": "command"
+            }, 
+            "Job2": {
+                "dep_on": "",
+                "command": "c"
+            }
+        }
         pass
 
     def test_read_params(self):
-        with open("test/test_params.yaml", "r") as test_params:
-            job_params = read_params(test_params, self.job_names)
+        job_params = read_params(self.params_handle, self.job_names)
         self.assertTrue(
             job_params,
             {
@@ -31,4 +43,23 @@ class readTest(unittest.TestCase):
                 }
             }
 
+        )
+    
+    def test_check_rules(self):
+        self.assertRaises(ValueError, check_rules, self.rules_fail)
+
+    def test_read_rules(self):
+        self.assertEqual(
+            read_rules(self.rules_handle),
+            {
+                "prepend": "Prepend this command",
+                "Job1": {
+                    "depends_on": "",
+                    "command": "Rscript Job1.R"
+                },
+                "Job2": {
+                    "depends_on": "Job1",
+                    "command": "python3 Job2.R"
+                }
+            }
         )

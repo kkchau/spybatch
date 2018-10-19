@@ -19,7 +19,7 @@ def check_rules(rules):
     Return: Success or failure (bool)
     """
     for job in [_ for _ in rules.keys() if _ != "prepend"]:
-        if any(["depends_on", "command"] not in rules[job]):
+        if any([_ not in rules[job] for _ in ["depends_on", "command"]]):
             raise ValueError("Error in rule definition for job ", job)
     return(True)
 
