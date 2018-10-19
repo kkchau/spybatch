@@ -8,16 +8,13 @@ class Job:
         depends_on (set): Set of immediate parent job dependencies
         params (dict): Keyword job parameters, matching those found in config file
         command (str): Command to be submitted
-        slurm_id (int): Job submission id
-        is_satisfied (bool): Is the job ready to be queued?
     """
     def __init__(
             self, 
             name, 
             depends_on, 
             params, 
-            command,
-            slurm_id = None): 
+            command): 
         self._name = name
         self._depends_on = depends_on
         self._params = params

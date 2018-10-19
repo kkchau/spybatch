@@ -1,7 +1,7 @@
 import unittest
 import sys
 
-from spybatch import read_params
+from spybatch.job_definitions import read_params
 
 class readTest(unittest.TestCase):
 
