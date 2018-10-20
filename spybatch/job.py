@@ -33,7 +33,16 @@ class Job:
             return(self.name == other.name)
 
     def __repr__(self):
-        return(self._name)
+        return('\n'.join(
+            [
+                "Job Name: " + self._name,
+                "Depends on " + ", ".join(self._depends_on),
+                "With parameters " + ", ".join([
+                    " : ".join([a, self._params[a]]) for a in self._params
+                ]),
+                "Execution: " + self._command
+            ]
+        ))
 
     def check_dependencies(self, check_against):
         """Check if this job's dependencies are all found within the input list
@@ -44,7 +53,7 @@ class Job:
             self._is_satistfied = False
         return(self.is_ready)
 
-    def build_submission(self, slurm_script, shell_prepend = None):
+    def build_submission(self, slurm_script):
         """Build job submission script
 
         Function will write a SLURM submission script to the tmp_dir
@@ -57,5 +66,5 @@ class Job:
             (" ".join((prefix, parameter, self._params[parameter]))) 
             for parameter in self._params.keys()
         ]
-        script += [shell_prepend, self._command]
+        script += self._command
         slurm_script.write('\n'.join(script))

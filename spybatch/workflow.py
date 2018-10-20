@@ -16,6 +16,11 @@ class Workflow:
         self.ready_to_run = ready_to_run
 
     def submit(self):
+        try:
+            if (self.ready_to_run == False):
+                raise(ValueError("Workflow is not ready to run"))
+        except ValueError as e:
+            raise(e)
         pass
 
     def organize_workflow(self):

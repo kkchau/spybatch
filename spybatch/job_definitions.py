@@ -9,9 +9,9 @@ def read_rules(rules_file):
     rules = yaml.safe_load(rules_file)
     try:
         check_rules(rules)
+        return(rules)
     except ValueError as e:
         raise(e)
-    return rules
 
 def check_rules(rules):
     """Check that each job definitionn has at least the correct attributes, i.e. dependencies and command

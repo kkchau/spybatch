@@ -9,16 +9,16 @@ def create_jobs(rules, params):
     
     Return: List of Job instances
     """
-    prepend_command = rules["prepend"]
-    jobs = []
-    for job in [_ for _ in rules.keys() if _ != "prepend"]:
-        new_job = Job(
-            name = job,
+    jobs = [
+        Job(
+            name = job, 
             depends_on = rules[job]["depends_on"],
             params = params[job],
-            command = [prepend_command, rules[job]["command"]]
-        )
-        jobs.append(new_job)
+            command = [rules["prepend"], rules[job]["command"]]
+        ) for job in [
+            _ for _ in rules.keys() if _ != "prepend"
+        ]
+    ]
     return(jobs)
 
 def argument_parser():
@@ -26,14 +26,19 @@ def argument_parser():
 
 def main():
     try:
-        rules = read_rules
+        rules = read_rules      #TODO:  Parse args
     except ValueError as e:
         raise(e)
-    params = read_params
-    jobs_all = create_jobs(rules, params)
-    workflow = Workflow(jobs_all)
+
+    params = read_params        # TODO: Parse args
+    workflow = Workflow(create_jobs(rules, params))
+
     try:
         workflow.organize_workflow()
     except ValueError as e:
         raise(e)
-    pass
+
+    try:
+        workflow.submit()
+    except ValueError as e:
+        exit(str(e))

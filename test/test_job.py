@@ -12,7 +12,7 @@ class JobTest(unittest.TestCase):
             "test", 
             set(["dep1", "dep3"]), 
             {"--param1": "p1", "--param2": "p2"},
-            "COMMAND"
+            ["PREPEND", "COMMAND"]
         )
 
     def test_check_dependencies(self):
@@ -23,7 +23,7 @@ class JobTest(unittest.TestCase):
 
     def test_build_submission(self):
         output = StringIO()
-        self.job.build_submission(output, shell_prepend = "PREPEND")
+        self.job.build_submission(output)
         output.seek(0)
         test_content = [_.strip('\n') for _ in output.readlines()]
         self.assertEqual(
