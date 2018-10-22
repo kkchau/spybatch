@@ -1,5 +1,9 @@
 import sys
 import yaml
+import re
+
+SCRIPT_EXT = [".py", ".R", ".sh"]
+SCRIPT_CAPTURES = [re.compile("^|\W(.+" + _ + ")") for _ in SCRIPT_EXT]
 
 def read_rules(rules_file):
     """Read rules defining each job from the provided fules file (handle)
@@ -9,12 +13,29 @@ def read_rules(rules_file):
     rules = yaml.safe_load(rules_file)
     try:
         check_rules(rules)
+        for r in rules:
+            rules[r]["--workdir"] = check_working_dir(r)
         return(rules)
     except ValueError as e:
         raise(e)
 
+def check_working_dir(rule):
+        """Check if a working directory is defined for the rule, else use directory of the script
+        """
+        if ("--workdir" in rule.keys()):
+            return(rule["--workdir"])
+        else:
+            # Parse command for path to script directory
+            script = [re.findall(script_pattern, rule["command"])[1] for script_pattern in SCRIPT_CAPTURES if len(re.findall(script_pattern, rule["command"])) > 1]
+            if not script:
+                raise ValueError("No valid scripts detected")
+            script_path = "/".join(script[0].strip().split("/")[:-1])
+            if not script_path:
+                return(".")
+        return(script_path)
+
 def check_rules(rules):
-    """Check that each job definitionn has at least the correct attributes, i.e. dependencies and command
+    """Check that each job definition has at least the correct attributes, i.e. dependencies and command
     
     Return: Success or failure (bool)
     """

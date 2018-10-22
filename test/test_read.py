@@ -55,7 +55,7 @@ class readTest(unittest.TestCase):
                 "prepend": "Prepend this command",
                 "Job1": {
                     "depends_on": "",
-                    "command": "Rscript Job1.R"
+                    "command": "Rscript some/path/Job1.R"
                 },
                 "Job2": {
                     "depends_on": "Job1",
