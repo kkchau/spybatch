@@ -2,7 +2,7 @@ import yaml
 
 from spybatch.job import Job
 from spybatch.workflow import Workflow
-from spybatch.job_definitions import read_rules, read_params
+from spybatch.job_definitions import read_rules, read_params, check_working_dir
 
 def create_jobs(rules, params):
     """Create rules given definitions provided by rules and params dictionaries

@@ -3,6 +3,8 @@ import sys
 from io import StringIO
 
 from spybatch.job import Job
+from spybatch.job_definitions import read_rules, read_params
+from spybatch import create_jobs
 
 class JobTest(unittest.TestCase):
     """Tests for the Job class (job.py)"""
@@ -35,6 +37,45 @@ class JobTest(unittest.TestCase):
                 "PREPEND",
                 "COMMAND"
             ]
+        )
+
+    def test_job_creation(self):
+        with open("test/test_rules.yaml", 'r') as r_handle:
+            rules = read_rules(r_handle)
+        with open("test/test_params.yaml", 'r') as p_handle:
+            params = read_params(p_handle, rules)
+        jobs = create_jobs(rules, params)
+        jobs_test = [
+            Job(
+                "Job1",
+                [""],
+                {
+                    "--time": "00:05:00",
+                    "--partition": "compute",
+                    "--mem": "20G",
+                    "--mail-type": "ALL",
+                    "--mail-user": "test@test.edu",
+                    "--workdir": "some/path"
+                },
+                ["Prepend this command", "Rscript some/path/Job1.R"]
+            ),
+            Job(
+                "Job2",
+                ["Job1"],
+                {
+                    "--time": "00:05:00",
+                    "--partition": "shared",
+                    "--mem": "10G",
+                    "--mail-type": "ALL",
+                    "--mail-user": "test@test.edu",
+                    "--workdir": "."
+                },
+                ["Prepend this command", "Rscript Job2.R"]
+            )
+        ]
+        self.assertEqual(
+            jobs, 
+            jobs_test
         )
 
 if __name__ == "__main__":
