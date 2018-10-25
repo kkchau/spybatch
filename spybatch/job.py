@@ -56,9 +56,7 @@ class Job:
     def build_submission(self, slurm_script):
         """Build job submission script
 
-        Function will write a SLURM submission script to the tmp_dir
-
-        return: File handle to the submission script
+        Function will write a SLURM submission script to the passed file handle
         """
         prefix = "#SBATCH"
         script = ["#!/usr/bin/env bash"]

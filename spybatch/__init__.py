@@ -26,19 +26,17 @@ def argument_parser():
 
 def main():
     try:
-        rules = read_rules      #TODO:  Parse args
+        rules = read_rules
     except ValueError as e:
         raise(e)
 
-    params = read_params        # TODO: Parse args
+    params = read_params
     workflow = Workflow(create_jobs(rules, params))
 
     try:
         workflow.organize_workflow()
-    except ValueError as e:
-        raise(e)
-
-    try:
+        workflow.build_scripts()
         workflow.submit()
+        workflow.clean()
     except ValueError as e:
         exit(str(e))
