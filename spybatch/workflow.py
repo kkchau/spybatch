@@ -36,8 +36,9 @@ class Workflow:
             raise(ValueError("Workflow is not ready to run"))
         for job in self.jobs:
             temp_file = mkstemp(dir = script_dir)
-            job.build_submission(temp_file[0])
-            self._job_script_paths[job.name] = temp_file
+            with open(temp_file[1], 'w') as write_script:
+                job.build_submission(write_script)
+            self._job_script_paths[job.name] = temp_file[1]
             print(job.name, temp_file[1], file = sys.stderr)
 
     def submit(self):
@@ -46,15 +47,11 @@ class Workflow:
         if (self.ready_to_run == False):
             raise(ValueError("Workflow is not ready to run"))
         for job in self.jobs:
-
-            ### THIS SHOULD BE IN JOB.PY (Job.build_sbatch_call)
             sbatch_call = ["sbatch"]
             if not job.depends_on:
                 dep_flag = "--dependency=" + ",".join(["afterok:" + self._job_dependencies[dependency] for dependency in job.depends_on])
                 sbatch_call.append(dep_flag)
             sbatch_call.append(self._job_script_paths[job.name][1])
-            ###
-            
             try:
                 slurm_id_full = check_output(sbatch_call)
                 slurm_id = slurm_id_full.strip().split()[-1]
@@ -70,5 +67,4 @@ class Workflow:
         """Clean up temporary SBATCH scripts
         """
         for job in self.jobs:
-            os.close(self._job_script_paths[job.name][0])
-            os.remove(self._job_script_paths[job.name][1])
+            os.remove(self._job_script_paths[job.name])

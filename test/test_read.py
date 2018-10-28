@@ -62,8 +62,8 @@ class readTest(unittest.TestCase):
                         "command": "Rscript some/path/Job1.R"
                     },
                     "Job2": {
-                        "depends_on": "Job1",
-                        "command": "python3 Job2.R"
+                        "depends_on": ["Job1"],
+                        "command": "python3 Job2.py"
                     }
                 }
             )

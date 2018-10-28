@@ -40,7 +40,19 @@ class Job:
                 "With parameters " + ", ".join([
                     " : ".join([a, self._params[a]]) for a in self._params
                 ]),
-                "Execution: " + self._command
+                "Execution: " + '\n'.join(self._command)
+            ]
+        ))
+    
+    def __str__(self):
+        return('\n'.join(
+            [
+                "Job Name: " + self._name,
+                "Depends on " + ", ".join(self._depends_on),
+                "With parameters " + ", ".join([
+                    " : ".join([a, self._params[a]]) for a in self._params
+                ]),
+                "Execution: " + '\n'.join(self._command)
             ]
         ))
 
@@ -66,3 +78,4 @@ class Job:
         ]
         script += self._command
         slurm_script.write('\n'.join(script))
+
